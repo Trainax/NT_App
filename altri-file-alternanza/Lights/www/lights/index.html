@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Lights</title>
+    <link rel="apple-touch-icon" href="img/icon-touch.png">
+    <link rel="icon" sizes="192x192" href="img/icon-touch.png">
+    <link rel="shortcut icon" href="img/favicon.ico">
+    <meta name="msapplication-TileColor" content="#20B2AA">
+    <meta name="msapplication-TileImage" content="img/icon-tile.png">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
+    <style>
+      body {
+        color: black;
+        font-family: "Lucida Console", Monaco, monospace;
+        text-align: center;
+
+      }
+      #status{
+        margin: 30px auto;
+      }
+      #loading{
+        display: inline-block;
+        background-image: url('img/loading.gif');
+        height: 16px;
+        width: 16px;
+        margin: 0 5px;
+      }
+      #buttons{
+      }
+      button{
+        color: black;
+        border-style: none;
+        font-size: 4em;
+        display: inline-block;
+      }
+      #lights-on{
+        background-color: white;
+        display: none;
+      }
+      #lights-off{
+        background-color: white;
+        display: none;
+      }
+    </style>
+    <script type="text/javascript" src="js/zepto.min.js"></script>
+    <script type="text/javascript">
+      var busy = false;
+      function lights(s){
+        if(s != 'status'){
+          busy = true;
+          $('button').each(function(){this.disabled = true});
+          $('#loading').show();
+        }
+        $.ajax({
+          type: 'GET',
+          url: '/arduino/'+s,
+          timeout: 10000,
+          context: $('body'),
+          dataType: 'json',
+          success: function(data){
+            if(data.state == 0){
+              $('#lights-off').show();
+              $('#lights2-off').show();
+              $('body').css('background-color','#337ab7');
+              $('body').css('color','black');
+            }else{
+              $('#lights-on').show();
+              $('#lights2-on').show();
+              $('body').css('background-color','#337ab7');
+              $('body').css('color','black');
+            }
+            busy = false;
+            $('button').each(function(){this.disabled = false});
+            $('#loading').hide();
+            $('#content').load('/sd/Lights/lights');
+          },
+          error: function(xhr, type){
+            busy = false;
+            $('button').each(function(){this.disabled = false});
+            $('#loading').hide();
+          }
+        })
+      }
+      window.setInterval(function(){
+        if(!busy){
+          lights('status');
+        }
+      },5000)
+    </script>
+  </head>
+  <body>
+    <div id="status">
+      <span id="loading"></span><span id="content">Centralina Arduino</span>
+    </div>
+    <div id="buttons">
+      <button id="lights-on" onClick="lights('lights-on')">OFF prima luce</button>
+      <button id="lights-off" onClick="lights('lights-off')">ON prima luce</button>
+      <button id="lights2-on" onClick="lights('lights2-on')">OFF seconda luce</button>
+      <button id="lights2-off" onClick="lights('lights2-off')">ON seconda luce</button>
+      <button id="estate-on" onClick="lights('estate-on')">Estate</button>
+      <button id="estate-off" onClick="lights('estate-off')">Inverno</button>
+    </div>
+    <script>
+      lights('status');
+    </script>
+  </body>
+</html>

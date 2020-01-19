@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<script type="text/javascript" src="zepto.min.js"></script>
+	  <script type="text/javascript">
+	   	function refresh() {
+		  	$('#content').load('/arduino/temperature');
+	  	}
+</script>
+
+	</head>
+	<body onload="setInterval(refresh, 500);">
+		<span id="content">Caricamento schermata in corso. Si prega di attendere qualche istante.<br>A breve sar&agrave possibile visualizzare le informazioni richieste.</span>
+	</body>
+</html>
